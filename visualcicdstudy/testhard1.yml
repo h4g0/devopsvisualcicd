@@ -1,0 +1,53 @@
+name: Build, Test, and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # or your preferred version
+          cache: 'yarn'
+      
+      - name: Install dependencies
+        run: yarn install
+      
+      - name: Run tests
+        run: yarn test
+      
+      - name: Build app
+        run: yarn build
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: built-app
+          path: .
+
+  deploy:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: built-app
+      
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }} # or your app name
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          branch: 'main'
+          usedocker: false
+          healthcheck: 'https://${{ secrets.HEROKU_APP_NAME }}.herokuapp.com/'
+          checkstring: 'ok'
+          delay: 5
