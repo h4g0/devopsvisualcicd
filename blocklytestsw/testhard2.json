@@ -1,0 +1,248 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ecore_pipeline",
+        "id": "z[Ib{|:nKA_X-((s~Y7y",
+        "x": 139,
+        "y": 52,
+        "fields": {
+          "ATTR_NAME": "tutorial_pipeline",
+          "ATTR_CONCURRENT": false
+        },
+        "inputs": {
+          "CONT_WHEN": {
+            "block": {
+              "type": "ecore_when",
+              "id": "DTaRHa_sIjpJ}I/yuaf3",
+              "fields": {
+                "ATTR_NAME": "on_push",
+                "ATTR_TRIGGER": "workflow_dispatch",
+                "ATTR_TIMER": ""
+              }
+            }
+          },
+          "CONT_JOB": {
+            "block": {
+              "type": "ecore_job",
+              "id": "g9%$Xvx-66h,Oh/PL!Ki",
+              "fields": {
+                "ATTR_NAME": "build_test",
+                "ATTR_ALLOWFAILURE": false,
+                "ATTR_DESCRIPTION": "Build and test the application"
+              },
+              "inputs": {
+                "CONT_TOOL": {
+                  "block": {
+                    "type": "ecore_tool",
+                    "id": "fU!MZF|^*4yx9Zdg+SXA",
+                    "fields": {
+                      "ATTR_NAME": "ubuntu-latest"
+                    }
+                  }
+                },
+                "CONT_COMMAND": {
+                  "block": {
+                    "type": "ecore_command",
+                    "id": "v/:A=M+O0|oFd1MHc;*u",
+                    "fields": {
+                      "ATTR_NAME": ""
+                    },
+                    "inputs": {
+                      "CONT_TOOL": {
+                        "block": {
+                          "type": "ecore_tool_value",
+                          "id": "^R:d2:U{15KAu@KM.]Xl",
+                          "fields": {
+                            "ATTR_NAME": "actions/checkout@v4"
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "ecore_command",
+                        "id": "x~rd@7X]hL(FQntuYO:`",
+                        "fields": {
+                          "ATTR_NAME": "Setup Python"
+                        },
+                        "inputs": {
+                          "CONT_TOOL": {
+                            "block": {
+                              "type": "ecore_tool_value",
+                              "id": "R(v=JXNbA4YBt?wxmnPb",
+                              "fields": {
+                                "ATTR_NAME": "actions/setup-python@v4"
+                              }
+                            }
+                          },
+                          "CONT_PARAMETER": {
+                            "block": {
+                              "type": "ecore_parameter",
+                              "id": "y*O.ju4%P(/}HR{F?~`(",
+                              "fields": {
+                                "ATTR_PARAMETER": " python-version: '3.9'"
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "ecore_command",
+                            "id": ",r:f7LGYVjru.8AEe^DQ",
+                            "fields": {
+                              "ATTR_NAME": "Install dependencies"
+                            },
+                            "inputs": {
+                              "CONT_TOOL": {
+                                "block": {
+                                  "type": "ecore_tool_value",
+                                  "id": ";r!70=$l~QlJ==up]!bj",
+                                  "fields": {
+                                    "ATTR_NAME": "pip"
+                                  }
+                                }
+                              },
+                              "CONT_PARAMETER": {
+                                "block": {
+                                  "type": "ecore_parameter",
+                                  "id": "W@8SD5xoWK%q9DPlL2f`",
+                                  "fields": {
+                                    "ATTR_PARAMETER": "install -r requirements.txt"
+                                  }
+                                }
+                              }
+                            },
+                            "next": {
+                              "block": {
+                                "type": "ecore_command",
+                                "id": "l|1b`*Tm[~_jl}AW{H?A",
+                                "fields": {
+                                  "ATTR_NAME": "Run tests"
+                                },
+                                "inputs": {
+                                  "CONT_TOOL": {
+                                    "block": {
+                                      "type": "ecore_tool_value",
+                                      "id": "s/B1@Op,2?upDsr(}dBv",
+                                      "fields": {
+                                        "ATTR_NAME": "pytest"
+                                      }
+                                    }
+                                  },
+                                  "CONT_PARAMETER": {
+                                    "block": {
+                                      "type": "ecore_parameter",
+                                      "id": ";BGnJ@|cTx!bIHT)+NeR",
+                                      "fields": {
+                                        "ATTR_PARAMETER": "|| true"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "next": {
+                "block": {
+                  "type": "ecore_job",
+                  "id": "]nqynmHPV0k4q0M/m3i3",
+                  "fields": {
+                    "ATTR_NAME": "deploy",
+                    "ATTR_ALLOWFAILURE": true,
+                    "ATTR_DESCRIPTION": "Build and test the application"
+                  },
+                  "inputs": {
+                    "CONT_TOOL": {
+                      "block": {
+                        "type": "ecore_tool",
+                        "id": "pr!MFu5|bGl?4RsfI:CA",
+                        "fields": {
+                          "ATTR_NAME": "ubuntu-latest"
+                        }
+                      }
+                    },
+                    "CONT_COMMAND": {
+                      "block": {
+                        "type": "ecore_command",
+                        "id": "IQ]x8ET~KPJ:czC?A)e)",
+                        "fields": {
+                          "ATTR_NAME": ""
+                        },
+                        "inputs": {
+                          "CONT_TOOL": {
+                            "block": {
+                              "type": "ecore_tool_value",
+                              "id": "`9Jlh3w@ohI3nIh..==e",
+                              "fields": {
+                                "ATTR_NAME": "actions/checkout@v4"
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "ecore_command",
+                            "id": "1XK~WW0R$4l:V[!yk3-X",
+                            "fields": {
+                              "ATTR_NAME": "Deploy to Heroku"
+                            },
+                            "inputs": {
+                              "CONT_TOOL": {
+                                "block": {
+                                  "type": "ecore_tool_value",
+                                  "id": "%uP*Q5g+CyAkZ.ckgf[v",
+                                  "fields": {
+                                    "ATTR_NAME": "akhileshns/heroku-deploy@v3.12.12"
+                                  }
+                                }
+                              },
+                              "CONT_PARAMETER": {
+                                "block": {
+                                  "type": "ecore_parameter",
+                                  "id": "Si;M`-#~5[1$@5FDo/|P",
+                                  "fields": {
+                                    "ATTR_PARAMETER": "heroku_api_key: ${{ secrets.HEROKU_API_KEY }}"
+                                  },
+                                  "next": {
+                                    "block": {
+                                      "type": "ecore_parameter",
+                                      "id": "0l:fc/v$$dL7[$8Z-.2*",
+                                      "fields": {
+                                        "ATTR_PARAMETER": "heroku_app_name: \"your-app-name-here\""
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "REL_DEPENDS": {
+                      "block": {
+                        "type": "ecore_job_dependency",
+                        "id": "LDF/)h%W,6Qm.(I@x)-4",
+                        "fields": {
+                          "ATTR_NAME": "build_test"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

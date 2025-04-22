@@ -691,41 +691,117 @@ Ecore["ecore_parameter"] = (block: any) => {
       return `"${name}"`
     }
 
-    // IfThenElse block generator
     Ecore["ecore_ifthenelse"] = (block: any) => {
       const condition = block.getFieldValue("ATTR_CONDITION") || "true"
-
+    
       // Get connected blocks
       const trueBlock = block.getInputTargetBlock("CONT_TRUE")
       const falseBlock = block.getInputTargetBlock("CONT_FALSE")
-
-      // Generate code with proper indentation
-      let code = `      condition: ${condition}\n`
-
+    
+      // Generate code for GitHub Actions if conditions
+      let code = ""
+    
       // Add true branch if present
       if (trueBlock) {
-        code += `      if_true:\n`
-        const trueCode = window.Blockly.Ecore.blockToCode(trueBlock)
-        code += indentCode(trueCode, 4)
+        // Generate code for the true branch
+        let trueCode = window.Blockly.Ecore.blockToCode(trueBlock)
+        
+        // Insert the condition after each "- name:" line
+        const lines = trueCode.split('\n')
+        let processedCode = ""
+        
+        for (let i = 0; i < lines.length; i++) {
+          processedCode += lines[i] + '\n'
+          
+          // If this is a "- name:" line, add the condition on the next line
+          if (lines[i].trim().startsWith('- name:') && i + 1 < lines.length) {
+            // Insert condition before the next line (which is typically 'uses:' or 'run:')
+            processedCode += `        if: ${condition}\n`
+          }
+        }
+        
+        code += processedCode
       }
-
+    
       // Add false branch if present
       if (falseBlock) {
-        code += `      if_false:\n`
-        const falseCode = window.Blockly.Ecore.blockToCode(falseBlock)
-        code += indentCode(falseCode, 4)
+        // Generate code for the false branch, with inverted condition
+        const invertedCondition = `!(${condition})`
+        let falseCode = window.Blockly.Ecore.blockToCode(falseBlock)
+        
+        // Insert the inverted condition after each "- name:" line
+        const lines = falseCode.split('\n')
+        let processedCode = ""
+        
+        for (let i = 0; i < lines.length; i++) {
+          processedCode += lines[i] + '\n'
+          
+          // If this is a "- name:" line, add the inverted condition on the next line
+          if (lines[i].trim().startsWith('- name:') && i + 1 < lines.length) {
+            // Insert inverted condition before the next line (which is typically 'uses:' or 'run:')
+            processedCode += `        if: ${invertedCondition}\n`
+          }
+        }
+        
+        code += processedCode
       }
-
-      // Check for next ifthenelse block
+    
+      // Check for next block
       const nextBlock = block.getNextBlock()
       if (nextBlock) {
         const nextCode = window.Blockly.Ecore.blockToCode(nextBlock)
         code += nextCode
       }
-
+    
       return code
     }
-
+    
+    Ecore["ecore_if"] = (block: any) => {
+      // Get connected blocks
+      const commandBlock = block.getInputTargetBlock("CONT_COMMAND")
+      const ifThenElseBlock = block.getInputTargetBlock("CONT_IFTHENELSE")
+    
+      // Generate code
+      let code = ""
+    
+      // Add command blocks if present
+      if (commandBlock) {
+        const commandCode = window.Blockly.Ecore.blockToCode(commandBlock)
+        code += commandCode
+      }
+    
+      // Add ifThenElse blocks if present
+      if (ifThenElseBlock) {
+        const ifThenElseCode = window.Blockly.Ecore.blockToCode(ifThenElseBlock)
+        code += ifThenElseCode
+      }
+    
+      return code
+    }
+    
+    Ecore["ecore_else"] = (block: any) => {
+      // Get connected blocks
+      const commandBlock = block.getInputTargetBlock("CONT_COMMAND")
+      const ifThenElseBlock = block.getInputTargetBlock("CONT_IFTHENELSE")
+    
+      // Generate code
+      let code = ""
+    
+      // Add command blocks if present
+      if (commandBlock) {
+        const commandCode = window.Blockly.Ecore.blockToCode(commandBlock)
+        code += commandCode
+      }
+    
+      // Add ifThenElse blocks if present
+      if (ifThenElseBlock) {
+        const ifThenElseCode = window.Blockly.Ecore.blockToCode(ifThenElseBlock)
+        code += ifThenElseCode
+      }
+    
+      return code
+    }
+    
     // Parameter block generator
     Ecore["ecore_parameter"] = (block: any) => {
       const parameter = block.getFieldValue("ATTR_PARAMETER") || "param"
@@ -782,56 +858,7 @@ Ecore["ecore_parameter"] = (block: any) => {
     }
 
     // If block generator
-    Ecore["ecore_if"] = (block: any) => {
-      // Get connected blocks
-      const commandBlock = block.getInputTargetBlock("CONT_COMMAND")
-      const ifThenElseBlock = block.getInputTargetBlock("CONT_IFTHENELSE")
 
-      // Generate code with proper indentation
-      let code = "\n"
-
-      // Add command blocks if present
-      if (commandBlock) {
-        const commandCode = window.Blockly.Ecore.blockToCode(commandBlock)
-        // Increase indentation for nested blocks
-        code += commandCode
-      }
-
-      // Add ifThenElse blocks if present
-      if (ifThenElseBlock) {
-        const ifThenElseCode = window.Blockly.Ecore.blockToCode(ifThenElseBlock)
-        // Increase indentation for nested blocks
-        code += ifThenElseCode
-      }
-
-      return code
-    }
-
-    // Else block generator
-    Ecore["ecore_else"] = (block: any) => {
-      // Get connected blocks
-      const commandBlock = block.getInputTargetBlock("CONT_COMMAND")
-      const ifThenElseBlock = block.getInputTargetBlock("CONT_IFTHENELSE")
-
-      // Generate code with proper indentation
-      let code = "\n"
-
-      // Add command blocks if present
-      if (commandBlock) {
-        const commandCode = window.Blockly.Ecore.blockToCode(commandBlock)
-        // Increase indentation for nested blocks
-        code += commandCode
-      }
-
-      // Add ifThenElse blocks if present
-      if (ifThenElseBlock) {
-        const ifThenElseCode = window.Blockly.Ecore.blockToCode(ifThenElseBlock)
-        // Increase indentation for nested blocks
-        code += ifThenElseCode
-      }
-
-      return code
-    }
 
     // Job dependency block generator
     Ecore["ecore_job_dependency"] = (block: any) => {
